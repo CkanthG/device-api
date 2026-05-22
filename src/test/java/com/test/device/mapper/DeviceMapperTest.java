@@ -41,4 +41,32 @@ class DeviceMapperTest {
     assertThat(response.getBrand()).isEqualTo("Test Brand");
     assertThat(response.getState()).isEqualTo(State.IN_USE);
   }
+
+  @Test
+  void toUpdateDeviceDto() {
+    var deviceProperties = new DeviceProperties("Updated Device", "Updated Brand", State.AVAILABLE);
+    var device = new Device(1L, "Test Device", "Test Brand", State.AVAILABLE, LocalTime.now());
+
+    var response = mapper.toUpdateDevice(deviceProperties, device);
+
+    assertThat(response.getId()).isEqualTo(1L);
+    assertThat(response.getName()).isEqualTo("Updated Device");
+    assertThat(response.getBrand()).isEqualTo("Updated Brand");
+    assertThat(response.getState()).isEqualTo(State.AVAILABLE);
+    assertThat(response.getCreationTime()).isEqualTo(device.getCreationTime());
+  }
+
+  @Test
+  void toUpdatePartialDeviceProperties() {
+    var deviceProperties = new DeviceProperties("Updated Device", null, State.AVAILABLE);
+    var device = new Device(1L, "Test Device", "Test Brand", State.AVAILABLE, LocalTime.now());
+
+    var response = mapper.toUpdateDevice(deviceProperties, device);
+
+    assertThat(response.getId()).isEqualTo(1L);
+    assertThat(response.getName()).isEqualTo("Updated Device");
+    assertThat(response.getBrand()).isEqualTo("Test Brand");
+    assertThat(response.getState()).isEqualTo(State.AVAILABLE);
+    assertThat(response.getCreationTime()).isEqualTo(device.getCreationTime());
+  }
 }

@@ -20,6 +20,16 @@ public class DeviceMapper {
     );
   }
 
+  public Device toUpdateDevice(DeviceProperties deviceProperties, Device deviceObject) {
+    return new Device(
+      deviceObject.getId(),
+      deviceProperties.getName() != null ? deviceProperties.getName() : deviceObject.getName(),
+      deviceProperties.getBrand() != null ? deviceProperties.getBrand() : deviceObject.getBrand(),
+      deviceProperties.getState() != null ? deviceProperties.getState() : deviceObject.getState(),
+      deviceObject.getCreationTime()
+   );
+  }
+
   public DeviceDto toDeviceDto(Device device) {
     return new DeviceDto(
       device.getId(),
