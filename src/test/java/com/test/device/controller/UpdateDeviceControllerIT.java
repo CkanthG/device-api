@@ -7,13 +7,16 @@ import com.test.device.entity.Device;
 import com.test.device.model.DeviceDto;
 import com.test.device.model.State;
 import com.test.device.repository.DeviceRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
+import com.test.device.TestcontainersConfiguration;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalTime;
@@ -24,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(TestcontainersConfiguration.class)
 class UpdateDeviceControllerIT {
 
   @Autowired
@@ -31,7 +35,12 @@ class UpdateDeviceControllerIT {
   @Autowired
   ObjectMapper objectMapper;
   @Autowired
-  DeviceRepository deviceRepository;
+  private DeviceRepository deviceRepository;
+
+  @AfterEach
+  void tearDown() {
+    deviceRepository.deleteAll();
+  }
 
   @Test
   void updateDevice() throws Exception {
@@ -68,7 +77,7 @@ class UpdateDeviceControllerIT {
     var device = deviceRepository.save(
       new Device(null, "abc", "xyz", State.IN_USE, LocalTime.now())
     );
-    var response = mockMvc.perform(
+    mockMvc.perform(
       put("/api/devices/" + device.getId())
       .contentType(MediaType.APPLICATION_JSON)
       .content("""
@@ -86,7 +95,7 @@ class UpdateDeviceControllerIT {
     var device = deviceRepository.save(
       new Device(null, "abc", "xyz", State.AVAILABLE, LocalTime.now())
     );
-    var response = mockMvc.perform(
+    mockMvc.perform(
       put("/api/devices/" + device.getId())
       .contentType(MediaType.APPLICATION_JSON)
       .content("""
@@ -102,7 +111,7 @@ class UpdateDeviceControllerIT {
 
   @Test
   void updateDeviceFailedWhenDeviceNotFound() throws Exception {
-    var response = mockMvc.perform(
+    mockMvc.perform(
       put("/api/devices/9999")
         .contentType(MediaType.APPLICATION_JSON)
         .content("""
@@ -131,7 +140,7 @@ class UpdateDeviceControllerIT {
       ).andExpect(status().isOk()).andReturn().getResponse();
 
     var updatedDevice = toDeviceDto(response);
-    assertThat(updatedDevice.getState().name()).isEqualTo("IN_ACTIVE");;
+    assertThat(updatedDevice.getState().name()).isEqualTo("IN_ACTIVE");
   }
 
   private DeviceDto toDeviceDto(MockHttpServletResponse response)
