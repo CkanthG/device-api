@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @RestController
-@RequestMapping("/api/devices")
+@RequestMapping("/api/v1/devices")
 public @interface DeviceRestController {
 }
