@@ -9,3 +9,8 @@ CREATE TABLE IF NOT EXISTS devices (
     state VARCHAR(255),
     creation_time TIME DEFAULT CURRENT_TIME
 );
+
+-- changeset devices:2
+-- Create indexes for faster querying
+CREATE INDEX idx_devices_brand ON devices(brand);
+CREATE INDEX idx_devices_state ON devices(state);
